@@ -1,17 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
 import numpy as np
 import scipy
 from matplotlib import pyplot as plt
 import kwant
 import kwant.continuum
-
-
-# In[2]:
 
 
 honeycomb = kwant.lattice.honeycomb()
@@ -51,10 +42,9 @@ p = dict(t=1.0, t_2=0.0, M=0.0, phi=np.pi/2)
 k = (4/3)*np.linspace(-2*np.pi, 2*np.pi, 150)
 
 
-# In[3]:
-
-
 infinite_bulk=kwant.wraparound.wraparound(haldane_infinite).finalized()
+
+#Finds out the bulk energies for k_y=0
 edz=[]
 for kx in k:
     p['k_x']=kx
@@ -64,10 +54,7 @@ for kx in k:
     edz.append(energies)
 plt.plot(k,edz,color='tab:red')
 
-
-# In[4]:
-
-
+#k_y is not a good quantum number
 W = 20
 def ribbon_shape_zigzag(site):
     return -0.5 / np.sqrt(3) - 0.1 <= site.pos[1] < np.sqrt(3) * W / 2 + 0.01
@@ -78,11 +65,9 @@ zigzag_ribbon.fill(haldane_infinite, ribbon_shape_zigzag, (0, 0))
 
 zigzag_ribbon=kwant.wraparound.wraparound(zigzag_ribbon).finalized()
 
-
-# In[5]:
-
-
 k = np.linspace(0, 2*np.pi, 101)
+
+#Introduce complex next nearest neighbour hopping in honeycomb lattice
 a=0.03
 p['t_2']=a
 p['t_2i']=-a
@@ -91,12 +76,9 @@ for kx in k:
     p['k_x']=kx
     ham=zigzag_ribbon.hamiltonian_submatrix(params=p)
     energies,eigvec=scipy.linalg.eigh(ham)
-    e.append(energies)
+    e.append(energies) #save the eigenvalues in the list e
 
-
-# In[6]:
-
-
+#Plot e along the y axis for each value of k in x-axis
 plt.plot(k,e,color='tab:blue')
 plt.ylabel('$E/t$',fontsize=20)
 plt.xlabel('$k_x$',fontsize=20)
@@ -105,16 +87,5 @@ plt.yticks(ticks=np.linspace(-1,1,3),fontsize=15)
 plt.xticks(ticks=np.linspace(0,2*np.pi,3),labels=['0','$\pi$','$2\pi$'],fontsize=15)
 plt.tight_layout()
 plt.savefig('zigzag_ribbon_qsh.png',dpi=500)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
 
 
